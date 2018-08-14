@@ -1,0 +1,10 @@
+required = ["github.com/gin-gonic/gin"]
+
+[[constraint]]
+  name = "github.com/gin-gonic/gin"
+  version = "=1.2"
+  source = "github.com/gin-gonic/gin"
+
+[prune]
+    go-tests = true
+    unused-packages = true
