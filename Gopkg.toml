@@ -1,9 +1,13 @@
-required = ["github.com/gin-gonic/gin"]
+required = ["github.com/go-redis/redis","github.com/go-sql-driver/mysql"]
 
 [[constraint]]
-  name = "github.com/gin-gonic/gin"
-  version = "=1.2"
-  source = "github.com/gin-gonic/gin"
+  name = "github.com/go-redis/redis"
+  version = "=6.13.2"
+  source = "github.com/go-redis/redis"
+[[constraint]]
+  name = "github.com/go-sql-driver/mysql"
+  version = "=1.4.0"
+  source = "github.com/go-sql-driver/mysql"
 
 [prune]
     go-tests = true
