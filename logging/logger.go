@@ -13,17 +13,17 @@ import (
 
 // Log message level
 const (
-	KLevelFatal = iota
-	KLevelError
-	KLevelWarnning
-	KLevelNotice
-	KLevelInfo
-	KLevelTrace
-	KLevelDebug
+	LevelFatal = iota
+	LevelError
+	LevelWarning
+	LevelNotice
+	LevelInfo
+	LevelTrace
+	LevelDebug
 )
 
 // Log module name
-const KLogModuleName = "logModule"
+const LogModuleName = "logModule"
 
 // Log output message level abbreviation
 var LevelName = [7]string{"F", "E", "W", "N", "I", "T", "D"}
@@ -33,8 +33,8 @@ var loggerInstance *LogBase
 
 // Log output type
 const (
-	KOutputFile   = "file"
-	KOutputStdout = "stdout"
+	OutputFile   = "file"
+	OutputStdout = "stdout"
 )
 
 // Log interface. Need to be implemented when you want to extend.
@@ -60,7 +60,7 @@ type LogBase struct {
 
 // Implement ExitInterface
 func (l *LogBase) GetModuleName() string {
-	return KLogModuleName
+	return LogModuleName
 }
 
 // Implement ExitInterface
@@ -72,8 +72,8 @@ func (l *LogBase) Stop() error {
 
 // Initialize Log
 func InitLog() error {
-	outputType := configure.DefaultString("log.output", KOutputStdout)
-	level := configure.DefaultInt("log.level", KLevelDebug)
+	outputType := configure.DefaultString("log.output", OutputStdout)
+	level := configure.DefaultInt("log.level", LevelDebug)
 
 	logger, err := createLogger(outputType, level)
 	if err != nil {
@@ -91,7 +91,7 @@ func InitLog() error {
 // Create Logger instance
 func createLogger(outputType string, level int) (*LogBase, error) {
 	switch outputType {
-	case KOutputStdout:
+	case OutputStdout:
 		loggerInstance = &LogBase{
 			handle:  NewStdoutLog(),
 			message: make(chan []byte, 1000),
@@ -99,7 +99,7 @@ func createLogger(outputType string, level int) (*LogBase, error) {
 			level:   level,
 		}
 		return loggerInstance, nil
-	case KOutputFile:
+	case OutputFile:
 		loggerInstance = &LogBase{
 			handle:  NewFileLog(),
 			message: make(chan []byte, 1000),
@@ -108,7 +108,7 @@ func createLogger(outputType string, level int) (*LogBase, error) {
 		}
 		return loggerInstance, nil
 	default:
-		return nil, errors.New(configure.KUnknownTypeMsg)
+		return nil, errors.New(configure.UnknownTypeMsg)
 	}
 }
 
@@ -157,69 +157,69 @@ func (l *LogBase) Output(nowLevel int, msg string) {
 
 func Debug(args ...interface{}) {
 	msg := fmt.Sprint(args...)
-	GetLogger().Output(KLevelDebug, msg)
+	GetLogger().Output(LevelDebug, msg)
 }
 
 func DebugF(format string, a ...interface{}) {
 	msg := fmt.Sprintf(format, a...)
-	GetLogger().Output(KLevelDebug, msg)
+	GetLogger().Output(LevelDebug, msg)
 }
 
 func Trace(args ...interface{}) {
 	msg := fmt.Sprint(args...)
-	GetLogger().Output(KLevelTrace, msg)
+	GetLogger().Output(LevelTrace, msg)
 }
 
 func TraceF(format string, a ...interface{}) {
 	msg := fmt.Sprintf(format, a...)
-	GetLogger().Output(KLevelTrace, msg)
+	GetLogger().Output(LevelTrace, msg)
 }
 
 func Info(args ...interface{}) {
 	msg := fmt.Sprint(args...)
-	GetLogger().Output(KLevelInfo, msg)
+	GetLogger().Output(LevelInfo, msg)
 }
 
 func InfoF(format string, a ...interface{}) {
 	msg := fmt.Sprintf(format, a...)
-	GetLogger().Output(KLevelInfo, msg)
+	GetLogger().Output(LevelInfo, msg)
 }
 func Notice(args ...interface{}) {
 	msg := fmt.Sprint(args...)
-	GetLogger().Output(KLevelNotice, msg)
+	GetLogger().Output(LevelNotice, msg)
 }
 
 func NoticeF(format string, a ...interface{}) {
 	msg := fmt.Sprintf(format, a...)
-	GetLogger().Output(KLevelNotice, msg)
+	GetLogger().Output(LevelNotice, msg)
 }
 
 func Warning(args ...interface{}) {
 	msg := fmt.Sprint(args...)
-	GetLogger().Output(KLevelWarnning, msg)
+	GetLogger().Output(LevelWarning, msg)
 }
 
 func WarningF(format string, a ...interface{}) {
 	msg := fmt.Sprintf(format, a...)
-	GetLogger().Output(KLevelWarnning, msg)
+	GetLogger().Output(LevelWarning, msg)
 }
 
 func Error(args ...interface{}) {
 	msg := fmt.Sprint(args...)
-	GetLogger().Output(KLevelError, msg)
+	GetLogger().Output(LevelError, msg)
 }
 
 func ErrorF(format string, a ...interface{}) {
 	msg := fmt.Sprintf(format, a...)
-	GetLogger().Output(KLevelError, msg)
+	GetLogger().Output(LevelError, msg)
 }
 
 func Fatal(args ...interface{}) {
 	msg := fmt.Sprint(args...)
-	GetLogger().Output(KLevelFatal, msg)
+	GetLogger().Output(LevelFatal, msg)
 }
 
 func FatalF(format string, a ...interface{}) {
 	msg := fmt.Sprintf(format, a...)
-	GetLogger().Output(KLevelFatal, msg)
+	GetLogger().Output(LevelFatal, msg)
 }

@@ -15,7 +15,7 @@ func (s *LogStdout) Init() error {
 	return nil
 }
 
-// Output message in stdout.
+// Output message to stdout.
 func (s *LogStdout) OutputLogMsg(msg []byte) error {
 	fmt.Print(string(msg))
 	return nil

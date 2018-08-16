@@ -6,11 +6,11 @@ var Pid = os.Getpid()
 
 // Error code
 const (
-	KInitConfigError = iota + 1
-	KInitLogError
+	InitConfigError = iota + 1
+	InitLogError
 )
 
 // Error message
 const (
-	KUnknownTypeMsg = "unknown type"
+	UnknownTypeMsg = "unknown type"
 )

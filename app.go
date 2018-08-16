@@ -42,14 +42,14 @@ func initFrame() {
 	configErr := configure.InitConfig(*configFile, *runMode)
 	if configErr != nil {
 		fmt.Printf("Initialize Configure error : %s", configErr)
-		os.Exit(configure.KInitConfigError)
+		os.Exit(configure.InitConfigError)
 	}
 
 	// Initialize log
 	logErr := logging.InitLog()
 	if logErr != nil {
 		fmt.Printf("Initialize log error : %s", logErr)
-		os.Exit(configure.KInitLogError)
+		os.Exit(configure.InitLogError)
 	}
 
 	logging.Trace("Initialized frame")

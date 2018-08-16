@@ -17,17 +17,19 @@ var (
 	logName string
 )
 
-// 每隔多久刷新一次日志 单位秒
-const kFlushInterval = 10
+const (
+	// 每隔多久刷新一次日志 单位秒
+	flushInterval = 10
 
-// 默认日志路径
-const kDefaultLogDir = "/tmp"
+	// 默认日志路径
+	defaultLogDir = "/tmp"
 
-// 缓冲上限
-const kMaxSize = 256 * 1024
+	// 缓冲上限
+	maxSize = 256 * 1024
 
-// 缓冲区大小
-const kBufferSize = 1024 * 1024 * 1800
+	// 缓冲区大小
+	bufferSize = 1024 * 1024 * 1800
+)
 
 type LogFile struct {
 	mu sync.Mutex
@@ -42,10 +44,10 @@ type LogFile struct {
 
 func NewFileLog() ILog {
 	logFile := &LogFile{
-		LogDir:        configure.DefaultString("log.dir", kDefaultLogDir),
-		FlushInterval: uint64(configure.DefaultInt("log.flush_interval", kFlushInterval)),
-		MaxSize:       uint64(configure.DefaultInt("log.max_size", kMaxSize)),
-		BufferSize:    configure.DefaultInt("log.buffer_size", kBufferSize),
+		LogDir:        configure.DefaultString("log.dir", defaultLogDir),
+		FlushInterval: uint64(configure.DefaultInt("log.flush_interval", flushInterval)),
+		MaxSize:       uint64(configure.DefaultInt("log.max_size", maxSize)),
+		BufferSize:    configure.DefaultInt("log.buffer_size", bufferSize),
 	}
 
 	go logFile.flushDaemon()
@@ -53,19 +55,19 @@ func NewFileLog() ILog {
 	return logFile
 }
 
-// 初始化
+// Initialize
 func (f *LogFile) Init() error {
 	return f.BeginLog(time.Now())
 }
 
-// 输出日志到文件
+// Output message to log file
 func (f *LogFile) OutputLogMsg(msg []byte) error {
 	var err error
 
 	f.mu.Lock()
 	if f.nBytes+uint64(len(msg)) >= f.MaxSize {
-		// 当到达缓冲上限时 在创建一个新文件写入 以免遗漏
-		// 出现这种情况时应考虑更改配置log.max_size
+		// When the buffer upper limit is reached, create a new file to write to avoid missing
+		// Consider changing the configuration log.max_size when this happens
 		if err = f.BeginLog(time.Now()); err != nil {
 			return err
 		}
@@ -81,7 +83,7 @@ func (f *LogFile) Flush() {
 	f.lockAndFlushAll()
 }
 
-// 创建一个日志文件
+// Create a log file
 func (f *LogFile) create(t time.Time) (osFile *os.File, filename string, err error) {
 	fName := filepath.Join(f.LogDir, f.getName(t))
 	fileHandle, err := os.Create(fName)
@@ -92,7 +94,7 @@ func (f *LogFile) create(t time.Time) (osFile *os.File, filename string, err err
 	return fileHandle, fName, nil
 }
 
-// 日志文件的开始
+// Begin log goroutine
 func (f *LogFile) BeginLog(now time.Time) error {
 	if f.logFile != nil {
 		f.Flush()
@@ -119,7 +121,7 @@ func (f *LogFile) BeginLog(now time.Time) error {
 	return err
 }
 
-// 获取日志名
+// Generate log file name
 func (f *LogFile) getName(t time.Time) string {
 	appName := configure.DefaultString("app.log_name", "game.log")
 	logName = fmt.Sprintf("%s.%04d%02d%02d-%02d%02d%02d.%d",
@@ -148,14 +150,14 @@ func (f *LogFile) flushAll() {
 	}
 }
 
-// 每隔一个FlushInterval 把缓冲区的数据写到文件中
+// Timed write the data of the buffer to the file
 func (f *LogFile) flushDaemon() {
 	for range time.NewTicker(time.Duration(f.FlushInterval) * time.Second).C {
 		f.lockAndFlushAll()
 	}
 }
 
-// 返回当前日志文件名
+// Returns Log file name
 func GetLogName() string {
 	return logName
 }
