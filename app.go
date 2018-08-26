@@ -6,6 +6,7 @@ import (
 	"github.com/xxlixin1993/LiLGo/configure"
 	"github.com/xxlixin1993/LiLGo/graceful"
 	"github.com/xxlixin1993/LiLGo/logging"
+	"github.com/xxlixin1993/LiLGo/server"
 	"os"
 	"os/signal"
 	"runtime"
@@ -25,7 +26,7 @@ func main() {
 func initFrame() {
 	// Parsing configuration environment
 	runMode := flag.String("m", "local", "Use -m <config mode>")
-	configFile := flag.String("c", "./conf/app.ini", "use -c <config file>")
+	configFile := flag.String("c", "./app.ini", "use -c <config file>")
 	version := flag.Bool("v", false, "Use -v <current version>")
 	flag.Parse()
 
@@ -52,7 +53,19 @@ func initFrame() {
 		os.Exit(configure.InitLogError)
 	}
 
+	// TODO just test
+	eh := server.NewEasyHandler()
+	eh.GET("/", hello)
+	go eh.StartHTTPServer()
+
 	logging.Trace("Initialized frame")
+}
+
+func hello(context server.Context) error {
+	res := make(map[string]interface{})
+	res["message"] = "ok"
+	return context.JSON(200, res)
+
 }
 
 // Wait signal
