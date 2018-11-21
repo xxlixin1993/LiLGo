@@ -180,6 +180,7 @@ func NewEasyHandler() *EasyHandler {
 		router: NewRouter(),
 		debug:  configure.DefaultBool("app.debug", true),
 	}
+	eh.HTTPErrorHandler = eh.DefaultHTTPErrorHandler
 	eh.pool.New = func() interface{} {
 		return eh.NewHttpContext(nil, nil)
 	}
